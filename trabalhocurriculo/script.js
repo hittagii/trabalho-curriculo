@@ -7,15 +7,38 @@ const anoAtual = document.querySelector("#ano-atual");
 
 anoAtual.textContent = new Date().getFullYear();
 
+function obterTemaSalvo() {
+    try {
+        return localStorage.getItem("tema");
+    } catch (erro) {
+        return null;
+    }
+}
+
+function salvarTema(tema) {
+    try {
+        localStorage.setItem("tema", tema);
+    } catch (erro) {
+        return;
+    }
+}
+
+function atualizarTextoTema() {
+    const temaEscuro = document.documentElement.classList.contains("tema-escuro") || document.body.classList.contains("tema-escuro");
+    botaoTema.textContent = temaEscuro ? "Tema claro" : "Tema escuro";
+}
+
 function aplicarTemaSalvo() {
-    const temaSalvo = localStorage.getItem("tema");
+    const temaSalvo = obterTemaSalvo();
 
     if (temaSalvo === "escuro") {
+        document.documentElement.classList.add("tema-escuro");
         document.body.classList.add("tema-escuro");
     }
 }
 
 aplicarTemaSalvo();
+atualizarTextoTema();
 
 botaoMenu.addEventListener("click", () => {
     const menuAberto = menu.classList.toggle("aberto");
@@ -30,10 +53,12 @@ menu.addEventListener("click", (evento) => {
 });
 
 botaoTema.addEventListener("click", () => {
+    document.documentElement.classList.toggle("tema-escuro");
     document.body.classList.toggle("tema-escuro");
 
-    const temaAtual = document.body.classList.contains("tema-escuro") ? "escuro" : "claro";
-    localStorage.setItem("tema", temaAtual);
+    const temaAtual = document.documentElement.classList.contains("tema-escuro") ? "escuro" : "claro";
+    salvarTema(temaAtual);
+    atualizarTextoTema();
 });
 
 function mostrarErro(campo, mensagem) {
